@@ -21,7 +21,7 @@ struct Entry {
                 count == other.count);
     }
 };
-
+using IndexEntry = vector<Entry>;
 
 class ConverterJSON {
 
@@ -37,6 +37,7 @@ private:
     vector<vector<string>> textWords;
     vector<string> searchWords;
     json answers_dict;
+
 
 public:
     ConverterJSON() = default;
@@ -97,15 +98,17 @@ public:
 * в config.json
 */
     map<string, string> GetTextDocuments() {
-        std::stringstream buffer;
+
         for (const auto &path_file: path_file) {
             ifstream file_read(path_file);
             if (file_read.is_open()) {
+                std::stringstream buffer;
                 if (!text_file.count(path_file)) {
                     buffer << file_read.rdbuf();
                     text_file[path_file] = removeLineBreaks(buffer.str());
                 }
                 file_read.close();
+                buffer.clear();
             }
         }
         return text_file;
@@ -201,32 +204,62 @@ public:
             words.push_back(word);
         }
         return words;
+    };
+
+    void UpdateDocumentBase(const map<string, string>& input_docs) {
+
+        for (const auto& [name_path, text] : input_docs) {
+            // Avoid re-processing existing documents (if desired)
+             if (freq_dictionary.count(name_path)) continue;
+
+             lowerText = toLower(text);
+             docs = splitString(lowerText);
+
+            for (const string& searchWord : docs) {
+                auto it = freq_dictionary.find(searchWord);
+
+                if (it != freq_dictionary.end()) {
+                    // Word exists, check if an entry for this document exists
+                    bool found = false;
+                    for (auto& entry : it->second) {
+                        if (entry.doc_id == doc_id) {
+                            entry.count++;
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        it->second.push_back({doc_id, 1});
+                    }
+                } else {
+                    // Word doesn't exist, create a new entry
+                    freq_dictionary[searchWord] = {{doc_id, 1}};
+                }
+            }
+            doc_id++; // Increment the document index for the next document
+        }
     }
 
-    void UpdateDocumentBase(map<string, string> input_docs) {
-        for (const auto &[name_path, text]: input_docs) {
-            if (!freq_dictionary.count(name_path)) {
-                lowerText = toLower(text);
-                docs = splitString(lowerText);
-                
+
+    void show() {
+        for (const auto &entry: freq_dictionary) {
+            cout << "index[\"" << entry.first << "\"] = ";
+            for (size_t i = 0; i < entry.second.size(); ++i) {
+                cout << "{" << entry.second[i].doc_id << ", " << entry.second[i].count << "}";
+                if (i < entry.second.size() - 1) {
+                    cout << ", ";
+                }
             }
+            cout << endl;
         }
+    }
 
-    };
-/**
-* Обновить или заполнить базу документов, по которой будем совершать
-поиск
-* @param texts_input содержимое документов
-*/
-
-/**
-* Метод определяет количество вхождений слова word в загруженной базе
-документов
-* @param word слово, частоту вхождений которого необходимо определить
-* @return возвращает подготовленный список с частотой слов
-*/
-    std::vector<Entry> GetWordCount(const std::string& word);
+//    std::vector<Entry> GetWordCount(const std::string& word){
+//
+//    };
 private:
+    size_t doc_id = 0;
     string lowerText;
     std::vector<std::string> docs; // список содержимого документов
     std::map<std::string, std::vector<Entry>> freq_dictionary; // частотный
@@ -237,17 +270,19 @@ private:
     int main() {
 
         SetConsoleOutputCP(CP_UTF8);
-
+        InvertedIndex gal;
         ConverterJSON file_request;
         file_request.get_path();
         file_request.GetRequests();
-        map<string, string> fail = file_request.GetTextDocuments();
+        gal.UpdateDocumentBase(file_request.GetTextDocuments());
+        gal.show();
+
+         
 //    file_request.find_request();
 
-        for (const auto& element: fail) {
-            cout << element.first << "\n" << element.second << "\n";
-        }
-
+//        for(auto alement:file_request.GetTextDocuments()){
+//            cout<<alement.first<<"\n"<<alement.second<<"\n";
+//        }
 
     }
 
