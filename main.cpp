@@ -276,8 +276,6 @@ private:
         file_request.GetRequests();
         gal.UpdateDocumentBase(file_request.GetTextDocuments());
         gal.show();
-
-         
 //    file_request.find_request();
 
 //        for(auto alement:file_request.GetTextDocuments()){

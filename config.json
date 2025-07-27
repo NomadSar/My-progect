@@ -5,8 +5,8 @@
     "max_responses": 5
   },
   "files": [
-    "C:\\Users\\pardus\\CLionProjects\\search_engine/resources/file001.txt",
-    "C:\\Users\\pardus\\CLionProjects\\search_engine\\resources\\file002.txt"
+    "./resources/file001.txt",
+    "./resources/file002.txt"
 
   ]
 }
