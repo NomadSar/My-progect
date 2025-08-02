@@ -21,7 +21,40 @@ struct Entry {
                 count == other.count);
     }
 };
+
+struct RelativeIndex{
+
+    size_t doc_id;
+    float rank;
+
+    RelativeIndex() : doc_id(0), rank(0.0f) {};
+    bool operator ==(const RelativeIndex& other) const {
+        return (doc_id == other.doc_id && rank == other.rank);
+    }
+};
+
 using IndexEntry = vector<Entry>;
+
+static std::string toLower(const std::string &str) {
+
+    std::string result = str; // Создаем копию строки, чтобы не изменять исходную
+    std::transform(result.begin(), result.end(), result.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    return result;
+}
+
+
+// Функция для разбиения строки на слова
+static vector<string> splitString(const string &str) {
+    vector<string> words;
+    stringstream ss(str);
+    string word;
+    while (ss >> word) {
+        words.push_back(word);
+    }
+    return words;
+};
+
 
 class ConverterJSON {
 
@@ -31,13 +64,14 @@ private:
     double number_of_verson;
     int max_responses;
     map<string, string> text_file;
+    map<size_t, RelativeIndex> searchResults;
     vector<string> path_file;
     vector<string> requests;
     vector<vector<string>> requestWords;
     vector<vector<string>> textWords;
     vector<string> searchWords;
     json answers_dict;
-
+    vector<vector<RelativeIndex>> expected;
 
 public:
     ConverterJSON() = default;
@@ -125,8 +159,60 @@ public:
 
         return result;
     };
+
+    void request_apdeit(){
+        for (string &request: requests) {
+            request = toLower(request);
+            requestWords.push_back(splitString(request));
+        }
+    }
+
+    void find_request(const map<string, vector<Entry>>& base) {
+        searchResults.clear(); // Clear previous search results
+
+        for (const auto& request_ons : requestWords) {
+            for (const string& word : request_ons) { // Use range-based for loop for clarity
+                auto it = base.find(word);
+                if (it != base.end()) {
+                    for (const Entry& entry : it->second) {
+                        // Check if the doc_id is already in searchResults
+                        auto result_it = searchResults.find(entry.doc_id);
+
+                        if (result_it == searchResults.end()) {
+                            // Create a new RelativeIndex entry if it doesn't exist
+                            RelativeIndex rezalt_request;
+                            rezalt_request.doc_id = entry.doc_id;
+                            rezalt_request.rank = static_cast<float>(entry.count) / static_cast<float>(request_ons.size());
+                            searchResults[entry.doc_id] = rezalt_request;
+                        }
+                        else {
+                            // Update the rank for the existing doc_id
+                            result_it->second.rank += static_cast<float>(entry.count) / static_cast<float>(request_ons.size());
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    void printResults() const {
+        cout << "Search Results:\n";
+        for (const auto& [doc_id, result] : searchResults) {
+            cout << "doc_id: " << doc_id << ", rank: " << result.rank << endl;
+        }
+    }
+
 };
 
+
+//void find_request(map<std::string, std::vector<Entry>> base){
+//
+//
+//};
+
+//void putAnswers(std::vector<std::vector<std::pair<int, float>>>
+//                answers);
 
 // метод нахождения соответсвий.
 //    void find_request() {
@@ -206,7 +292,7 @@ public:
         return words;
     };
 
-    void UpdateDocumentBase(const map<string, string>& input_docs) {
+    std::map<std::string, std::vector<Entry>> UpdateDocumentBase(const map<string, string>& input_docs) {
 
         for (const auto& [name_path, text] : input_docs) {
             // Avoid re-processing existing documents (if desired)
@@ -239,6 +325,7 @@ public:
             }
             doc_id++; // Increment the document index for the next document
         }
+        return freq_dictionary;
     }
 
 
@@ -255,9 +342,8 @@ public:
         }
     }
 
-//    std::vector<Entry> GetWordCount(const std::string& word){
-//
-//    };
+
+
 private:
     size_t doc_id = 0;
     string lowerText;
@@ -274,8 +360,13 @@ private:
         ConverterJSON file_request;
         file_request.get_path();
         file_request.GetRequests();
-        gal.UpdateDocumentBase(file_request.GetTextDocuments());
-        gal.show();
+        file_request.request_apdeit();
+        file_request.find_request(gal.UpdateDocumentBase(file_request.GetTextDocuments()));
+
+        file_request.printResults();
+//        gal.show();
+
+
 //    file_request.find_request();
 
 //        for(auto alement:file_request.GetTextDocuments()){
