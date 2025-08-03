@@ -8,6 +8,7 @@
 #include <cctype>
 #include <algorithm>
 
+
 using namespace std;
 using json = nlohmann::json;
 
@@ -64,14 +65,10 @@ private:
     double number_of_verson;
     int max_responses;
     map<string, string> text_file;
-    map<size_t, RelativeIndex> searchResults;
+    vector<vector<RelativeIndex>> searchResults;
     vector<string> path_file;
     vector<string> requests;
     vector<vector<string>> requestWords;
-    vector<vector<string>> textWords;
-    vector<string> searchWords;
-    json answers_dict;
-    vector<vector<RelativeIndex>> expected;
 
 public:
     ConverterJSON() = default;
@@ -167,105 +164,79 @@ public:
         }
     }
 
-    void find_request(const map<string, vector<Entry>>& base) {
-        searchResults.clear(); // Clear previous search results
+    static bool compareRelativeIndex(const RelativeIndex& a, const RelativeIndex& b) {
+        return a.rank > b.rank;
+    }
 
-        for (const auto& request_ons : requestWords) {
-            for (const string& word : request_ons) { // Use range-based for loop for clarity
+// Формирования итога запроса;
+    void find_request(const map<string, vector<Entry>> &base) {
+        for (const auto &request_group: requestWords) {
+            vector<RelativeIndex> current_group_results;
+            size_t total_words_in_request = request_group.size();
+            if (total_words_in_request == 0) {
+                searchResults.push_back(current_group_results); // Add empty result if the query is empty
+                continue;
+            }
+
+            map<size_t, size_t> doc_id_counts;
+            for (const string &word: request_group) {
                 auto it = base.find(word);
                 if (it != base.end()) {
-                    for (const Entry& entry : it->second) {
-                        // Check if the doc_id is already in searchResults
-                        auto result_it = searchResults.find(entry.doc_id);
-
-                        if (result_it == searchResults.end()) {
-                            // Create a new RelativeIndex entry if it doesn't exist
-                            RelativeIndex rezalt_request;
-                            rezalt_request.doc_id = entry.doc_id;
-                            rezalt_request.rank = static_cast<float>(entry.count) / static_cast<float>(request_ons.size());
-                            searchResults[entry.doc_id] = rezalt_request;
-                        }
-                        else {
-                            // Update the rank for the existing doc_id
-                            result_it->second.rank += static_cast<float>(entry.count) / static_cast<float>(request_ons.size());
-                        }
+                    for (const Entry &entry: it->second) {
+                        doc_id_counts[entry.doc_id]+=entry.count;  // Increment the count for the document
                     }
                 }
             }
+
+
+            for (const auto &[doc_id, count]: doc_id_counts) {
+                float rank = static_cast<float>(count) / static_cast<float>(total_words_in_request);
+
+
+                rank = min(rank, 1.0f);
+
+                RelativeIndex relative_index;
+                relative_index.doc_id = doc_id;
+                relative_index.rank = rank;
+                current_group_results.push_back(relative_index);
+            }
+
+            sort(current_group_results.begin(), current_group_results.end(), compareRelativeIndex);
+            searchResults.push_back(current_group_results); // Add the results for this group
         }
+        printResults();
     }
 
 
+
+
     void printResults() const {
-        cout << "Search Results:\n";
-        for (const auto& [doc_id, result] : searchResults) {
-            cout << "doc_id: " << doc_id << ", rank: " << result.rank << endl;
+        json answers_dict;
+        answers_dict["answers"]["number_of_verson"]=number_of_verson;
+        for (size_t i = 0; i < searchResults.size(); ++i) {
+            string request_num = "request00" + to_string(i + 1);
+            if (searchResults[i].empty()) {
+                answers_dict["answers"][request_num]["result"] = false;
+            } else {
+                answers_dict["answers"][request_num]["result"] = true;
+                json relevance_array;
+                for (const auto& result : searchResults[i]) {
+                    json doc_info;
+                    doc_info["docid"] = result.doc_id;
+                    doc_info["rank"] = result.rank;
+                    relevance_array.push_back(doc_info); // Append each document
+                }
+                answers_dict["answers"][request_num]["relevance"] = relevance_array;
+            }
         }
+        std::ofstream outputFile("answers.json");
+        outputFile << std::setw(4) << answers_dict << std::endl;
+        outputFile.close();
     }
 
 };
 
 
-//void find_request(map<std::string, std::vector<Entry>> base){
-//
-//
-//};
-
-//void putAnswers(std::vector<std::vector<std::pair<int, float>>>
-//                answers);
-
-// метод нахождения соответсвий.
-//    void find_request() {
-//
-//
-//        //  Предобработка requests: переводим в нижний регистр и разбиваем на слова
-//
-//        for (string &request: requests) {
-//            request = toLower(request);
-//            requestWords.push_back(splitString(request));
-//        }
-//
-//        string line;
-//        int count;
-//        int _ = 5;
-//        map<int, int> mymap;
-//
-//        for (const auto &n: path_file) {
-//
-//            count = 0;
-//
-//            std::stringstream buffer;
-//            text_file.clear();
-//            ifstream file_read(n);
-//            if (file_read.is_open()) {
-//                buffer << file_read.rdbuf();
-//                file_read.close();
-//                string lowerText = toLower(removeLineBreaks(buffer.str()));
-//                searchWords = splitString(lowerText);
-//            };
-//
-//
-//            mymap.clear();
-//
-//
-//            for (int j{0}; j < requests.size(); j++) {
-//                count = 0;
-//
-//                for (const string &searchWord: searchWords) {
-//                    for (size_t x = 0; x < requestWords[j].size(); ++x) {
-//                        if (requestWords[j][x] == searchWord) {
-//                            count++;
-//                        }
-//                    }
-//                }
-//                mymap[j + 1] = +count;
-//            }
-//            for (const auto &[product, price]: mymap)
-//                std::cout << product << "\t" << price << std::endl;
-//            cout << "\n";
-//        }
-//    }
-//};
 
 class InvertedIndex {
 public:
@@ -292,7 +263,8 @@ public:
         return words;
     };
 
-    std::map<std::string, std::vector<Entry>> UpdateDocumentBase(const map<string, string>& input_docs) {
+// Заполнение базы данных
+    map<std::string, std::vector<Entry>> UpdateDocumentBase(const map<string, string>& input_docs) {
 
         for (const auto& [name_path, text] : input_docs) {
             // Avoid re-processing existing documents (if desired)
@@ -329,18 +301,18 @@ public:
     }
 
 
-    void show() {
-        for (const auto &entry: freq_dictionary) {
-            cout << "index[\"" << entry.first << "\"] = ";
-            for (size_t i = 0; i < entry.second.size(); ++i) {
-                cout << "{" << entry.second[i].doc_id << ", " << entry.second[i].count << "}";
-                if (i < entry.second.size() - 1) {
-                    cout << ", ";
-                }
-            }
-            cout << endl;
-        }
-    }
+//    void show() {
+//        for (const auto &entry: freq_dictionary) {
+//            cout << "index[\"" << entry.first << "\"] = ";
+//            for (size_t i = 0; i < entry.second.size(); ++i) {
+//                cout << "{" << entry.second[i].doc_id << ", " << entry.second[i].count << "}";
+//                if (i < entry.second.size() - 1) {
+//                    cout << ", ";
+//                }
+//            }
+//            cout << endl;
+//        }
+//    }
 
 
 
@@ -348,8 +320,7 @@ private:
     size_t doc_id = 0;
     string lowerText;
     std::vector<std::string> docs; // список содержимого документов
-    std::map<std::string, std::vector<Entry>> freq_dictionary; // частотный
-//    словарь
+    std::map<std::string, std::vector<Entry>> freq_dictionary; // частотный словарь
 };
 
 
@@ -362,16 +333,6 @@ private:
         file_request.GetRequests();
         file_request.request_apdeit();
         file_request.find_request(gal.UpdateDocumentBase(file_request.GetTextDocuments()));
-
-        file_request.printResults();
-//        gal.show();
-
-
-//    file_request.find_request();
-
-//        for(auto alement:file_request.GetTextDocuments()){
-//            cout<<alement.first<<"\n"<<alement.second<<"\n";
-//        }
 
     }
 

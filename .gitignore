@@ -3,3 +3,4 @@ CMakeLists.txt.user
 build/
 cmake-build-debug/
 out/
+answers.json
