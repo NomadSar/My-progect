@@ -75,7 +75,7 @@ public:
 
 // методо открывает файл config.json считывает данные в созданные переменные
     void get_path() {
-        ifstream file_config_read("config.json");
+        ifstream file_config_read("..\\config.json");
         if (file_config_read.is_open()) {
             string target = "config";
             json config_dict;
@@ -104,7 +104,7 @@ public:
 
 // метод открывает файл с запросами и сохраняет их.
     void GetRequests() {
-        ifstream file_requests_read("requests.json");
+        ifstream file_requests_read("..\\requests.json");
         if (file_requests_read.is_open()) {
             json requests_dict;
             file_requests_read >> requests_dict;
