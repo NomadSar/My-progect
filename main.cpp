@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include "nlohmann_json/include/nlohmann/json.hpp"
+#include <nlohmann/json.hpp>
 #include <Windows.h>
 #include <sstream>
 #include <cctype>
