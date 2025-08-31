@@ -9,11 +9,14 @@ set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 
 
-add_executable(search_engine main.cpp)
+add_executable(search_engine src/main.cpp)
 
 include(FetchContent)
 
-FetchContent_Declare(json URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz)
+FetchContent_Declare(
+        json
+        URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+        DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
 FetchContent_MakeAvailable(json)
 
 

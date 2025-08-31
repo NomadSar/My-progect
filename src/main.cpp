@@ -2,8 +2,8 @@
 #include <string>
 #include <vector>
 #include <fstream>
-#include <nlohmann/json.hpp>
-#include <Windows.h>
+#include "nlohmann/json.hpp"
+#include <windows.h>
 #include <sstream>
 #include <cctype>
 #include <algorithm>
@@ -75,7 +75,7 @@ public:
 
 // методо открывает файл config.json считывает данные в созданные переменные
     void get_path() {
-        ifstream file_config_read("..\\config.json");
+        ifstream file_config_read("..\\json_file\\config.json");
         if (file_config_read.is_open()) {
             string target = "config";
             json config_dict;
@@ -104,7 +104,7 @@ public:
 
 // метод открывает файл с запросами и сохраняет их.
     void GetRequests() {
-        ifstream file_requests_read("..\\requests.json");
+        ifstream file_requests_read("..\\json_file\\requests.json");
         if (file_requests_read.is_open()) {
             json requests_dict;
             file_requests_read >> requests_dict;
@@ -229,7 +229,7 @@ public:
                 answers_dict["answers"][request_num]["relevance"] = relevance_array;
             }
         }
-        std::ofstream outputFile("answers.json");
+        std::ofstream outputFile("..\\json_file\\answers.json");
         outputFile << std::setw(4) << answers_dict << std::endl;
         outputFile.close();
     }
@@ -301,18 +301,18 @@ public:
     }
 
 
-//    void show() {
-//        for (const auto &entry: freq_dictionary) {
-//            cout << "index[\"" << entry.first << "\"] = ";
-//            for (size_t i = 0; i < entry.second.size(); ++i) {
-//                cout << "{" << entry.second[i].doc_id << ", " << entry.second[i].count << "}";
-//                if (i < entry.second.size() - 1) {
-//                    cout << ", ";
-//                }
-//            }
-//            cout << endl;
-//        }
-//    }
+    void show() {
+        for (const auto &entry: freq_dictionary) {
+            cout << "index[\"" << entry.first << "\"] = ";
+            for (size_t i = 0; i < entry.second.size(); ++i) {
+                cout << "{" << entry.second[i].doc_id << ", " << entry.second[i].count << "}";
+                if (i < entry.second.size() - 1) {
+                    cout << ", ";
+                }
+            }
+            cout << endl;
+        }
+    }
 
 
 
@@ -333,6 +333,7 @@ private:
         file_request.GetRequests();
         file_request.request_apdeit();
         file_request.find_request(gal.UpdateDocumentBase(file_request.GetTextDocuments()));
+
 
     }
 
