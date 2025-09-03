@@ -7,54 +7,55 @@
 #include <sstream>
 #include <cctype>
 #include <algorithm>
+#include "static_metod.h"
 
 
 using namespace std;
 using json = nlohmann::json;
 
 
-struct Entry {
-    size_t doc_id, count;
+//struct Entry {
+//    size_t doc_id, count;
+//
+//// Данный оператор необходим для проведения тестовых сценариев
+//    bool operator==(const Entry &other) const {
+//        return (doc_id == other.doc_id &&
+//                count == other.count);
+//    }
+//};
 
-// Данный оператор необходим для проведения тестовых сценариев
-    bool operator==(const Entry &other) const {
-        return (doc_id == other.doc_id &&
-                count == other.count);
-    }
-};
-
-struct RelativeIndex{
-
-    size_t doc_id;
-    float rank;
-
-    RelativeIndex() : doc_id(0), rank(0.0f) {};
-    bool operator ==(const RelativeIndex& other) const {
-        return (doc_id == other.doc_id && rank == other.rank);
-    }
-};
+//struct RelativeIndex{
+//
+//    size_t doc_id;
+//    float rank;
+//
+//    RelativeIndex() : doc_id(0), rank(0.0f) {};
+//    bool operator ==(const RelativeIndex& other) const {
+//        return (doc_id == other.doc_id && rank == other.rank);
+//    }
+//};
 
 using IndexEntry = vector<Entry>;
 
-static std::string toLower(const std::string &str) {
-
-    std::string result = str; // Создаем копию строки, чтобы не изменять исходную
-    std::transform(result.begin(), result.end(), result.begin(),
-                   [](unsigned char c) { return std::tolower(c); });
-    return result;
-}
+//static std::string toLower(const std::string &str) {
+//
+//    std::string result = str; // Создаем копию строки, чтобы не изменять исходную
+//    std::transform(result.begin(), result.end(), result.begin(),
+//                   [](unsigned char c) { return std::tolower(c); });
+//    return result;
+//}
 
 
 // Функция для разбиения строки на слова
-static vector<string> splitString(const string &str) {
-    vector<string> words;
-    stringstream ss(str);
-    string word;
-    while (ss >> word) {
-        words.push_back(word);
-    }
-    return words;
-};
+//static vector<string> splitString(const string &str) {
+//    vector<string> words;
+//    stringstream ss(str);
+//    string word;
+//    while (ss >> word) {
+//        words.push_back(word);
+//    }
+//    return words;
+//};
 
 
 class ConverterJSON {
@@ -147,15 +148,15 @@ public:
 
 
 //Функция для замены символов переноса сторики
-    static string removeLineBreaks(const string &input_string) {
-        string result = input_string; // Create a copy of the input string
-
-        // Remove carriage returns ('\r') and newlines ('\n')
-        replace(result.begin(), result.end(), '\r', ' ');
-        replace(result.begin(), result.end(), '\n', ' ');
-
-        return result;
-    };
+//    static string removeLineBreaks(const string &input_string) {
+//        string result = input_string; // Create a copy of the input string
+//
+//        // Remove carriage returns ('\r') and newlines ('\n')
+//        replace(result.begin(), result.end(), '\r', ' ');
+//        replace(result.begin(), result.end(), '\n', ' ');
+//
+//        return result;
+//    };
 
     void request_apdeit(){
         for (string &request: requests) {
@@ -164,9 +165,9 @@ public:
         }
     }
 
-    static bool compareRelativeIndex(const RelativeIndex& a, const RelativeIndex& b) {
-        return a.rank > b.rank;
-    }
+//    static bool compareRelativeIndex(const RelativeIndex& a, const RelativeIndex& b) {
+//        return a.rank > b.rank;
+//    }
 
 // Формирования итога запроса;
     void find_request(const map<string, vector<Entry>> &base) {
@@ -243,25 +244,25 @@ public:
     InvertedIndex() = default;
 
     // Функция для преобразования строки в нижний регистр
-    static std::string toLower(const std::string &str) {
-
-        std::string result = str; // Создаем копию строки, чтобы не изменять исходную
-        std::transform(result.begin(), result.end(), result.begin(),
-                       [](unsigned char c) { return std::tolower(c); });
-        return result;
-    }
+//    static std::string toLower(const std::string &str) {
+//
+//        std::string result = str; // Создаем копию строки, чтобы не изменять исходную
+//        std::transform(result.begin(), result.end(), result.begin(),
+//                       [](unsigned char c) { return std::tolower(c); });
+//        return result;
+//    }
 
 
 // Функция для разбиения строки на слова
-    static vector<string> splitString(const string &str) {
-        vector<string> words;
-        stringstream ss(str);
-        string word;
-        while (ss >> word) {
-            words.push_back(word);
-        }
-        return words;
-    };
+//    static vector<string> splitString(const string &str) {
+//        vector<string> words;
+//        stringstream ss(str);
+//        string word;
+//        while (ss >> word) {
+//            words.push_back(word);
+//        }
+//        return words;
+//    };
 
 // Заполнение базы данных
     map<std::string, std::vector<Entry>> UpdateDocumentBase(const map<string, string>& input_docs) {

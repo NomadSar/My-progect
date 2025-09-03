@@ -7,9 +7,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
+file(GLOB
+        CPP_SOURCES "*src/*.cpp")
 
+include_directories("${PROJECT_SOURCE_DIR}/include")
 
-add_executable(search_engine src/main.cpp)
+add_executable(${PROJECT_NAME} ${CPP_SOURCES})
 
 include(FetchContent)
 
