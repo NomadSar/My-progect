@@ -6,6 +6,7 @@
 #include <fstream>
 #include "map"
 #include "static_metod.h"
+
 using namespace std;
 using json = nlohmann::json;
 
@@ -23,14 +24,14 @@ private:
 
 public:
 
-    void get_path() ;
+    void get_path();
 
-    void GetRequests() ;
+    void GetRequests();
 
-    map<string, string> GetTextDocuments() ;
+    map<string, string> GetTextDocuments();
 
     void request_apdeit();
 
-    void find_request(const map<string, vector<Entry>> &base) ;
+    void find_request(const map<string, vector<Entry>> &base);
 
 };
