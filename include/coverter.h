@@ -34,4 +34,5 @@ public:
 
     void find_request(const map<string, vector<Entry>> &base);
 
+    void printResults() const;
 };

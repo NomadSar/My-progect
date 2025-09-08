@@ -17,6 +17,7 @@ int main() {
     file_request.GetRequests();
     file_request.request_apdeit();
     file_request.find_request(gal.UpdateDocumentBase(file_request.GetTextDocuments()));
+    file_request.printResults();
 }
 
 
