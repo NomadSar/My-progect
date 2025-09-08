@@ -120,29 +120,29 @@ void ConverterJSON::find_request(const map<string, vector<Entry>> &base) {
     }
 };
 
-    void ConverterJSON::printResults() const {
-        json answers_dict;
-        answers_dict["answers"]["number_of_verson"]=number_of_verson;
-        for (size_t i = 0; i < searchResults.size(); ++i) {
-            string request_num = "request00" + to_string(i + 1);
-            if (searchResults[i].empty()) {
-                answers_dict["answers"][request_num]["result"] = false;
-            } else {
-                answers_dict["answers"][request_num]["result"] = true;
-                json relevance_array;
-                for (const auto& result : searchResults[i]) {
-                    json doc_info;
-                    doc_info["docid"] = result.doc_id;
-                    doc_info["rank"] = result.rank;
-                    relevance_array.push_back(doc_info); // Append each document
-                }
-                answers_dict["answers"][request_num]["relevance"] = relevance_array;
+void ConverterJSON::printResults() const {
+    json answers_dict;
+    answers_dict["answers"]["number_of_verson"] = number_of_verson;
+    for (size_t i = 0; i < searchResults.size(); ++i) {
+        string request_num = "request00" + to_string(i + 1);
+        if (searchResults[i].empty()) {
+            answers_dict["answers"][request_num]["result"] = false;
+        } else {
+            answers_dict["answers"][request_num]["result"] = true;
+            json relevance_array;
+            for (const auto &result: searchResults[i]) {
+                json doc_info;
+                doc_info["docid"] = result.doc_id;
+                doc_info["rank"] = result.rank;
+                relevance_array.push_back(doc_info); // Append each document
             }
+            answers_dict["answers"][request_num]["relevance"] = relevance_array;
         }
-        std::ofstream outputFile("..\\json_file\\answers.json");
-        outputFile << std::setw(4) << answers_dict << std::endl;
-        outputFile.close();
     }
+    std::ofstream outputFile("..\\json_file\\answers.json");
+    outputFile << std::setw(4) << answers_dict << std::endl;
+    outputFile.close();
+};
 
 
 
