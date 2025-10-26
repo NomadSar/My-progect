@@ -31,7 +31,7 @@ void ConverterJSON::get_path() {
 };
 
 // метод открывает файл с запросами и сохраняет их.
-void ConverterJSON::GetRequests() {
+vector <string> ConverterJSON::GetRequests() {
     ifstream file_requests_read("..\\json_file\\requests.json");
     if (file_requests_read.is_open()) {
         json requests_dict;
@@ -41,13 +41,14 @@ void ConverterJSON::GetRequests() {
              iterator_first != requests_dict.end(); ++iterator_first) {
             for (auto iterator_sekond = iterator_first.value().begin();
                  iterator_sekond != iterator_first.value().end() && i < max_responses; ++iterator_sekond, i++) {
-                requests.push_back(iterator_sekond.value());
+                requests.push_back(to_string(iterator_sekond.value()));
             }
         }
     } else {
         cerr << "requests file is missing" << endl;
     }
     file_requests_read.close();
+    return requests;
 };
 
 
@@ -56,16 +57,15 @@ void ConverterJSON::GetRequests() {
 * @return Возвращает список с содержимым файлов перечисленных
 * в config.json
 */
-map<string, string> ConverterJSON::GetTextDocuments() {
+vector<string> ConverterJSON::GetTextDocuments() {
 
     for (const auto &path_file: path_file) {
         ifstream file_read(path_file);
         if (file_read.is_open()) {
             std::stringstream buffer;
-            if (!text_file.count(path_file)) {
-                buffer << file_read.rdbuf();
-                text_file[path_file] = removeLineBreaks(buffer.str());
-            }
+            buffer << file_read.rdbuf();
+            text_file.push_back(removeLineBreaks(buffer.str())) ;
+
             file_read.close();
             buffer.clear();
         }
@@ -83,44 +83,44 @@ void ConverterJSON::request_apdeit() {
 
 
 // Формирования итога запроса;
-void ConverterJSON::find_request(const map<string, vector<Entry>> &base) {
-    for (const auto &request_group: requestWords) {
-        vector<RelativeIndex> current_group_results;
-        size_t total_words_in_request = request_group.size();
-        if (total_words_in_request == 0) {
-            searchResults.push_back(current_group_results);
-            continue;
-        }
+//void ConverterJSON::find_request(const map<string, vector<Entry>> &base) {
+//    for (const auto &request_group: requestWords) {
+//        vector<RelativeIndex> current_group_results;
+//        size_t total_words_in_request = request_group.size();
+//        if (total_words_in_request == 0) {
+//            searchResults.push_back(current_group_results);
+//            continue;
+//        }
+//
+//        map<size_t, size_t> doc_id_counts;
+//        for (const string &word: request_group) {
+//            auto it = base.find(word);
+//            if (it != base.end()) {
+//                for (const Entry &entry: it->second) {
+//                    doc_id_counts[entry.doc_id] += entry.count;
+//                }
+//            }
+//        }
+//
+//        for (const auto &[doc_id, count]: doc_id_counts) {
+//            float rank = static_cast<float>(count) / static_cast<float>(total_words_in_request);
+//
+//
+//            rank = min(rank, 1.0f);
+//
+//            RelativeIndex relative_index;
+//            relative_index.doc_id = doc_id;
+//            relative_index.rank = rank;
+//            current_group_results.push_back(relative_index);
+//        }
+//
+//        sort(current_group_results.begin(), current_group_results.end(), compareRelativeIndex);
+//        searchResults.push_back(current_group_results); // Add the results for this group
+//    }
+//};
 
-        map<size_t, size_t> doc_id_counts;
-        for (const string &word: request_group) {
-            auto it = base.find(word);
-            if (it != base.end()) {
-                for (const Entry &entry: it->second) {
-                    doc_id_counts[entry.doc_id] += entry.count;
-                }
-            }
-        }
 
-
-        for (const auto &[doc_id, count]: doc_id_counts) {
-            float rank = static_cast<float>(count) / static_cast<float>(total_words_in_request);
-
-
-            rank = min(rank, 1.0f);
-
-            RelativeIndex relative_index;
-            relative_index.doc_id = doc_id;
-            relative_index.rank = rank;
-            current_group_results.push_back(relative_index);
-        }
-
-        sort(current_group_results.begin(), current_group_results.end(), compareRelativeIndex);
-        searchResults.push_back(current_group_results); // Add the results for this group
-    }
-};
-
-void ConverterJSON::printResults() const {
+void ConverterJSON::printResults(vector<vector<RelativeIndex>> searchResults)  {
     json answers_dict;
     answers_dict["answers"]["number_of_verson"] = number_of_verson;
     for (size_t i = 0; i < searchResults.size(); ++i) {
@@ -144,7 +144,54 @@ void ConverterJSON::printResults() const {
     outputFile.close();
 };
 
-
-
+//void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> answers)
+//{
+////    std::filesystem::path answers_path = "..\\json_file\\requests.json";
+//    std::ofstream answers_file;
+//    nlohmann::json answers_data;
+//    nlohmann::json requests;
+//    nlohmann::json rel;
+////    if (std::filesystem::exists("..\\json_file\\answers.json"))
+////    {
+//        answers_file.open("..\\json_file\\answers.json");
+//
+//        for (size_t i = 0; i < answers.size(); i++)
+//        {
+//            std::vector<nlohmann::json> relevance;
+//            nlohmann::json request;
+//            if (answers[i].size() > 1)
+//            {
+//                request["result"] = "true";
+//                for (size_t j = 0; j < answers[i].size(); j++)
+//                {
+//                    rel["docid"] = answers[i][j].first;
+//                    rel["rank"] = answers[i][j].second;
+//                    relevance.emplace_back(rel);
+//                }
+//                request["relevance"] = relevance;
+//            }
+//            else if (answers[i].size() == 1)
+//            {
+//                request["result"] = "true";
+//                request["docid"] = answers[i][0].first;
+//                request["rank"] = answers[i][0].second;
+//            }
+//            else
+//            {
+//                request["result"] = "false";
+//            }
+//            requests["request" + std::string(i + 1 < 10 ? "00" : (i + 1 < 100 ? "0" : "")) + std::to_string(i + 1)] = request;
+//        }
+//        answers_data["answers"] = requests;
+//        answers_file << answers_data;
+//
+//        answers_file.close();
+//    }
+////    else
+////    {
+////        cerr <<"Запись не удалась";
+////    }
+//
+//
 
 

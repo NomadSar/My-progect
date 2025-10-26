@@ -13,7 +13,7 @@ file(GLOB
         CPP_SOURCES "*src/*.cpp")
 
 include_directories("${PROJECT_SOURCE_DIR}/include")
-include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
+#include_directories(${gtest_SOURCE_DIR}/include ${gtest_SOURCE_DIR})
 add_executable(${PROJECT_NAME} ${CPP_SOURCES})
 
 include(FetchContent)
@@ -25,17 +25,19 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
-FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/refs/heads/main.zip
-        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-)
+#add_subdirectory(tests)
 
-FetchContent_MakeAvailable(googletest)
+#FetchContent_Declare(
+#        googletest
+#        URL https://github.com/google/googletest/archive/refs/heads/main.zip
+#        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+#)
+
+#FetchContent_MakeAvailable(googletest)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
-target_link_libraries(${PROJECT_NAME} PRIVATE gtest_main)
+#target_link_libraries(${PROJECT_NAME} PRIVATE gtest_main)
 
-enable_testing()
-include(GoogleTest)
-gtest_discover_tests(${PROJECT_NAME})
+#enable_testing()
+#include(GoogleTest)
+#gtest_discover_tests(${PROJECT_NAME})

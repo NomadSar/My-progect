@@ -2,38 +2,99 @@
 #include "static_metod.h"
 
 // Заполнение базы данных
-map<std::string, std::vector<Entry>> InvertedIndex::UpdateDocumentBase(const map<string, string> &input_docs) {
+void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
+    std::mutex freq_dictionary_mutex;
+    /* очистка имеющихся данных */
+    docs.clear();
+    freq_dictionary.clear();
 
-    for (const auto &[name_path, text]: input_docs) {
+    docs.resize(input_docs.size());
+    files_count = input_docs.size();
 
-        if (freq_dictionary.count(name_path)) continue;
+    /* заполнение новыми данными файла docs */
+    std::copy(input_docs.begin(), input_docs.end(), docs.begin());
 
-        lowerText = toLower(text);
-        docs = splitString(lowerText);
+    /* лямбда-функция для обработки документа */
+    auto func = [&](size_t i){
+        std::stringstream buffer_stream(input_docs[i]);
+        std::string word;
+        int word_count = 0;
+        while (buffer_stream >> word && word_count < 1000)
+        {
+            if (word.empty())
+            {
+                break;
+            }
+            else if (word.size() > 100)
+            {
+                word.resize(100);
+            }
+            word_count++;
 
-        for (const string &searchWord: docs) {
-            auto it = freq_dictionary.find(searchWord);
-
-            if (it != freq_dictionary.end()) {
-                // Word exists, check if an entry for this document exists
-                bool found = false;
-                for (auto &entry: it->second) {
-                    if (entry.doc_id == doc_id) {
-                        entry.count++;
-                        found = true;
-                        break;
+            // блокировка для доступа к freq_dictionary
+            {
+                std::lock_guard<std::mutex> lock(freq_dictionary_mutex);
+                auto it = freq_dictionary.find(word);
+                if (it != freq_dictionary.end())
+                {
+                    bool flag = false;
+                    for (auto& entry : it->second)
+                    {
+                        if (entry.doc_id == i)
+                        {
+                            entry.count++;
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (!flag)
+                    {
+                        it->second.emplace_back(Entry{.doc_id = i, .count = 1});
                     }
                 }
-
-                if (!found) {
-                    it->second.push_back({doc_id, 1});
+                else
+                {
+                    freq_dictionary[word] = { Entry{.doc_id = i, .count = 1} };
                 }
-            } else {
-                // Word doesn't exist, create a new entry
-                freq_dictionary[searchWord] = {{doc_id, 1}};
             }
         }
-        doc_id++;
+    };
+
+    // создаем и запускаем потоки
+    std::vector<std::thread> threads;
+    size_t thread_count = 8; // можно сделать динамически
+    for (size_t i = 0; i < input_docs.size(); i++)
+    {
+        threads.emplace_back(func, i);
     }
-    return freq_dictionary;
+
+    // ожидаем завершения всех потоков
+    for (auto& t : threads)
+    {
+        t.join();
+    }
 }
+
+//std::vector<Entry> InvertedIndex::GetWordCount(const std::string& word)
+//{
+//    if (this->freq_dictionary.find(word) != this->freq_dictionary.end())
+//    {
+//        return this->freq_dictionary[word];
+//    }
+//
+//    return std::vector<Entry>(0);
+//}
+
+//size_t InvertedIndex::GetFilesCount() const
+//{
+//    return this->files_count;
+//}
+//
+//size_t InvertedIndex::GetFilesCount() const
+//{
+//    return this->files_count;
+//}
+
+std::map<std::string, std::vector<Entry>> InvertedIndex::get_dict(){
+    return freq_dictionary;
+};

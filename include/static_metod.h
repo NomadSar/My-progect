@@ -11,14 +11,11 @@
 using namespace std;
 
 struct RelativeIndex {
-
     size_t doc_id;
     float rank;
 
-    RelativeIndex() : doc_id(0), rank(0.0f) {};
-
-    bool operator==(const RelativeIndex &other) const {
-        return (doc_id == other.doc_id && rank == other.rank);
+    bool operator==(const RelativeIndex& other) const {
+        return (doc_id == other.doc_id && rank > (other.rank - 0.000001) && rank < (other.rank + 0.000001));
     }
 };
 
