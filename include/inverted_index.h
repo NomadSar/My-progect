@@ -21,9 +21,9 @@ public:
     std::vector<Entry> GetWordCount(const std::string& word);
 
     /*! \brief Метод для возвращения количества файлов */
-    size_t GetFilesCount() const;
+    [[nodiscard]] size_t GetFilesCount() const;
 
-    std::map<std::string, std::vector<Entry>> get_dict();
+//    std::map<std::string, std::vector<Entry>> get_dict();
 
 private:
     /*! \brief Список содержимого документов */

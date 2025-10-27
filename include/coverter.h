@@ -9,8 +9,7 @@
 
 using namespace std;
 using json = nlohmann::json;
-const std::string relative_path = "../../";
-const std::string relative_path_answers = relative_path + "json_file/answers.json";
+
 
 class ConverterJSON {
 
@@ -32,12 +31,13 @@ public:
 
     vector <string> GetTextDocuments();
 
-    int GetResponsesLimit() const;
-    int Getnameversion() const;
+    int GetResponsesLimit() ;
+//    int Getnameversion() const;
+//
+//    void request_apdeit();
 
-    void request_apdeit();
-
-    void find_request(const map<string, vector<Entry>> &base);
-
-    void printResults(vector<vector<RelativeIndex>> searchResults) const;
+    static void putAnswers(std::vector<std::vector<std::pair<int, float>>> answers);
+//    void find_request(const map<string, vector<Entry>> &base);
+//
+//    void printResults(vector<vector<RelativeIndex>> searchResults) const;
 };

@@ -74,46 +74,61 @@ vector<string> ConverterJSON::GetTextDocuments() {
     return text_file;
 }
 
-//Перевод текста запроса в нижний регист и формирование вектора из разбитых слов
-//void ConverterJSON::request_apdeit() {
-//    for (string &request: requests) {
-//        request = toLower(request);
-//        requestWords.push_back(splitString(request));
-//    }
-//};
 
-void ConverterJSON::printResults(vector<vector<RelativeIndex>> searchResults) const  {
-    json answers_dict;
-    answers_dict["answers"]["number_of_verson"] = Getnameversion();
-    cout<<Getnameversion();
-    for (size_t i = 0; i < searchResults.size(); ++i) {
-        string request_num = "request00" + to_string(i + 1);
-        if (searchResults[i].empty()) {
-            answers_dict["answers"][request_num]["result"] = false;
-        } else {
-            answers_dict["answers"][request_num]["result"] = true;
-            json relevance_array;
-            for (const auto &result: searchResults[i]) {
-                json doc_info;
-                doc_info["docid"] = result.doc_id;
-                doc_info["rank"] = result.rank;
-                relevance_array.push_back(doc_info); // Append each document
-            }
-            answers_dict["answers"][request_num]["relevance"] = relevance_array;
-        }
+int ConverterJSON::GetResponsesLimit() {
+    ifstream file_config_read("..\\json_file\\config.json");
+    if (file_config_read.is_open()) {
+        json config_dict;
+        file_config_read >> config_dict;
+
+        max_responses = config_dict["config"].value("max_responses", 5);
+    }else {
+        cerr<<"dont have max_responses";
     }
-    std::ofstream outputFile("..\\json_file\\answers.json");
-    outputFile << std::setw(4) << answers_dict << std::endl;
-    outputFile.close();
-}
-
-int ConverterJSON::GetResponsesLimit() const{
     return max_responses;
+
 }
 
-int ConverterJSON::Getnameversion() const{
-    return number_of_verson;
-}
+void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> answers)
+{
+    std::ofstream answers_file;
+    nlohmann::json answers_data;
+    nlohmann::json requests;
+    nlohmann::json rel;
 
+        answers_file.open("..\\json_file\\answers.json");
+
+        for (size_t i = 0; i < answers.size(); i++)
+        {
+            std::vector<nlohmann::json> relevance;
+            nlohmann::json request;
+            if (answers[i].size() > 1)
+            {
+                request["result"] = "true";
+                for (auto & j : answers[i])
+                {
+                    rel["docid"] = j.first;
+                    rel["rank"] = j.second;
+                    relevance.emplace_back(rel);
+                }
+                request["relevance"] = relevance;
+            }
+            else if (answers[i].size() == 1)
+            {
+                request["result"] = "true";
+                request["docid"] = answers[i][0].first;
+                request["rank"] = answers[i][0].second;
+            }
+            else
+            {
+                request["result"] = "false";
+            }
+            requests["request" + std::string(i + 1 < 10 ? "00" : (i + 1 < 100 ? "0" : "")) + std::to_string(i + 1)] = request;
+        }
+        answers_data["answers"] = requests;
+        answers_file << std::setw(4) << answers_data << std::endl;
+        answers_file.close();
+
+}
 
 
