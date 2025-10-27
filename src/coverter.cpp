@@ -13,7 +13,7 @@ void ConverterJSON::get_path() {
         }
 
         name_program = config_dict["config"].value("name", "UnknownEngine");
-        number_of_verson = config_dict["config"].value("version", 0.1);
+        number_of_verson = config_dict["config"].value("version", 1);
         max_responses = config_dict["config"].value("max_responses", 5);
 
         for (auto iterator_first = config_dict.begin(); iterator_first != config_dict.end(); ++iterator_first) {
@@ -28,7 +28,8 @@ void ConverterJSON::get_path() {
     } else {
         cerr << "config file is missing" << endl;
     }
-};
+}
+
 
 // метод открывает файл с запросами и сохраняет их.
 vector <string> ConverterJSON::GetRequests() {
@@ -49,7 +50,7 @@ vector <string> ConverterJSON::GetRequests() {
     }
     file_requests_read.close();
     return requests;
-};
+}
 
 
 /**
@@ -59,8 +60,8 @@ vector <string> ConverterJSON::GetRequests() {
 */
 vector<string> ConverterJSON::GetTextDocuments() {
 
-    for (const auto &path_file: path_file) {
-        ifstream file_read(path_file);
+    for (const auto &item: path_file) {
+        ifstream file_read(item);
         if (file_read.is_open()) {
             std::stringstream buffer;
             buffer << file_read.rdbuf();
@@ -71,58 +72,20 @@ vector<string> ConverterJSON::GetTextDocuments() {
         }
     }
     return text_file;
-};
+}
 
 //Перевод текста запроса в нижний регист и формирование вектора из разбитых слов
-void ConverterJSON::request_apdeit() {
-    for (string &request: requests) {
-        request = toLower(request);
-        requestWords.push_back(splitString(request));
-    }
-};
-
-
-// Формирования итога запроса;
-//void ConverterJSON::find_request(const map<string, vector<Entry>> &base) {
-//    for (const auto &request_group: requestWords) {
-//        vector<RelativeIndex> current_group_results;
-//        size_t total_words_in_request = request_group.size();
-//        if (total_words_in_request == 0) {
-//            searchResults.push_back(current_group_results);
-//            continue;
-//        }
-//
-//        map<size_t, size_t> doc_id_counts;
-//        for (const string &word: request_group) {
-//            auto it = base.find(word);
-//            if (it != base.end()) {
-//                for (const Entry &entry: it->second) {
-//                    doc_id_counts[entry.doc_id] += entry.count;
-//                }
-//            }
-//        }
-//
-//        for (const auto &[doc_id, count]: doc_id_counts) {
-//            float rank = static_cast<float>(count) / static_cast<float>(total_words_in_request);
-//
-//
-//            rank = min(rank, 1.0f);
-//
-//            RelativeIndex relative_index;
-//            relative_index.doc_id = doc_id;
-//            relative_index.rank = rank;
-//            current_group_results.push_back(relative_index);
-//        }
-//
-//        sort(current_group_results.begin(), current_group_results.end(), compareRelativeIndex);
-//        searchResults.push_back(current_group_results); // Add the results for this group
+//void ConverterJSON::request_apdeit() {
+//    for (string &request: requests) {
+//        request = toLower(request);
+//        requestWords.push_back(splitString(request));
 //    }
 //};
 
-
-void ConverterJSON::printResults(vector<vector<RelativeIndex>> searchResults)  {
+void ConverterJSON::printResults(vector<vector<RelativeIndex>> searchResults) const  {
     json answers_dict;
-    answers_dict["answers"]["number_of_verson"] = number_of_verson;
+    answers_dict["answers"]["number_of_verson"] = Getnameversion();
+    cout<<Getnameversion();
     for (size_t i = 0; i < searchResults.size(); ++i) {
         string request_num = "request00" + to_string(i + 1);
         if (searchResults[i].empty()) {
@@ -142,56 +105,15 @@ void ConverterJSON::printResults(vector<vector<RelativeIndex>> searchResults)  {
     std::ofstream outputFile("..\\json_file\\answers.json");
     outputFile << std::setw(4) << answers_dict << std::endl;
     outputFile.close();
-};
+}
 
-//void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> answers)
-//{
-////    std::filesystem::path answers_path = "..\\json_file\\requests.json";
-//    std::ofstream answers_file;
-//    nlohmann::json answers_data;
-//    nlohmann::json requests;
-//    nlohmann::json rel;
-////    if (std::filesystem::exists("..\\json_file\\answers.json"))
-////    {
-//        answers_file.open("..\\json_file\\answers.json");
-//
-//        for (size_t i = 0; i < answers.size(); i++)
-//        {
-//            std::vector<nlohmann::json> relevance;
-//            nlohmann::json request;
-//            if (answers[i].size() > 1)
-//            {
-//                request["result"] = "true";
-//                for (size_t j = 0; j < answers[i].size(); j++)
-//                {
-//                    rel["docid"] = answers[i][j].first;
-//                    rel["rank"] = answers[i][j].second;
-//                    relevance.emplace_back(rel);
-//                }
-//                request["relevance"] = relevance;
-//            }
-//            else if (answers[i].size() == 1)
-//            {
-//                request["result"] = "true";
-//                request["docid"] = answers[i][0].first;
-//                request["rank"] = answers[i][0].second;
-//            }
-//            else
-//            {
-//                request["result"] = "false";
-//            }
-//            requests["request" + std::string(i + 1 < 10 ? "00" : (i + 1 < 100 ? "0" : "")) + std::to_string(i + 1)] = request;
-//        }
-//        answers_data["answers"] = requests;
-//        answers_file << answers_data;
-//
-//        answers_file.close();
-//    }
-////    else
-////    {
-////        cerr <<"Запись не удалась";
-////    }
-//
-//
+int ConverterJSON::GetResponsesLimit() const{
+    return max_responses;
+}
+
+int ConverterJSON::Getnameversion() const{
+    return number_of_verson;
+}
+
 
 

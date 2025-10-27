@@ -16,7 +16,7 @@ class ConverterJSON {
 
 private:
     string name_program;
-    double number_of_verson;
+    int number_of_verson;
     int max_responses;
     vector<string> text_file;
 //    vector<vector<RelativeIndex>> searchResults;
@@ -32,9 +32,12 @@ public:
 
     vector <string> GetTextDocuments();
 
+    int GetResponsesLimit() const;
+    int Getnameversion() const;
+
     void request_apdeit();
 
     void find_request(const map<string, vector<Entry>> &base);
 
-    void printResults(vector<vector<RelativeIndex>> searchResults);
+    void printResults(vector<vector<RelativeIndex>> searchResults) const;
 };

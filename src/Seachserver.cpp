@@ -1,13 +1,13 @@
 #include "Seachserver.h"
 #include "static_metod.h"
 
-std::vector<std::vector<RelativeIndex>> SearchServer::search( std::vector<std::string>& queries_input) {
+std::vector<std::vector<RelativeIndex>> SearchServer::search( const std::vector<std::string>& queries_input) {
     ConverterJSON converter;
     vector<vector<string>> requestWords;
     vector<vector<RelativeIndex>> searchResults;
     std::map<std::string, std::vector<Entry>> freq_dictionary = _index.get_dict();
 
-    for (string &request: queries_input) {
+    for (string request: queries_input) {
         std::string toRemove = "\"";
 
         std::size_t pos;
@@ -42,7 +42,7 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search( std::vector<std::s
 
             rank = min(rank, 1.0f);
 
-            RelativeIndex relative_index;
+            RelativeIndex relative_index{};
             relative_index.doc_id = doc_id;
             relative_index.rank = rank;
             current_group_results.push_back(relative_index);
@@ -54,4 +54,4 @@ std::vector<std::vector<RelativeIndex>> SearchServer::search( std::vector<std::s
     converter.printResults(searchResults);
 
     return searchResults;
-};
+}

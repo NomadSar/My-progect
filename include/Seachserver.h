@@ -21,7 +21,7 @@ public:
     /*! \brief Метод обработки поисковых запросов */
     /*! \param queries_input поисковые запросы, взятые из файла requests.json */
     /*! \returns Возвращает отсортированный список релевантных ответов для заданных запросов */
-    std::vector<std::vector<RelativeIndex>> search( std::vector<std::string>& queries_input);
+    std::vector<std::vector<RelativeIndex>> search( const std::vector<std::string>& queries_input);
 private:
     InvertedIndex _index;
 };

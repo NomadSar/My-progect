@@ -60,10 +60,11 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
         }
     };
 
-    // создаем и запускаем потоки
+//     создаем и запускаем потоки
     std::vector<std::thread> threads;
-    size_t thread_count = 8; // можно сделать динамически
-    for (size_t i = 0; i < input_docs.size(); i++)
+
+    threads.reserve(input_docs.size());
+for (size_t i = 0; i < input_docs.size(); i++)
     {
         threads.emplace_back(func, i);
     }
@@ -75,15 +76,15 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
     }
 }
 
-//std::vector<Entry> InvertedIndex::GetWordCount(const std::string& word)
-//{
-//    if (this->freq_dictionary.find(word) != this->freq_dictionary.end())
-//    {
-//        return this->freq_dictionary[word];
-//    }
-//
-//    return std::vector<Entry>(0);
-//}
+std::vector<Entry> InvertedIndex::GetWordCount(const std::string& word)
+{
+    if (this->freq_dictionary.find(word) != this->freq_dictionary.end())
+    {
+        return this->freq_dictionary[word];
+    }
+
+    return std::vector<Entry>(0);
+}
 
 //size_t InvertedIndex::GetFilesCount() const
 //{
@@ -97,4 +98,4 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
 
 std::map<std::string, std::vector<Entry>> InvertedIndex::get_dict(){
     return freq_dictionary;
-};
+}
