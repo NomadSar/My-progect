@@ -14,7 +14,6 @@ void ConverterJSON::get_path() {
 
         name_program = config_dict["config"].value("name", "UnknownEngine");
         number_of_verson = config_dict["config"].value("version", 1);
-        max_responses = config_dict["config"].value("max_responses", 5);
 
         for (auto iterator_first = config_dict.begin(); iterator_first != config_dict.end(); ++iterator_first) {
             for (auto iterator_sekond = iterator_first.value().begin();
@@ -86,6 +85,33 @@ int ConverterJSON::GetResponsesLimit() {
         cerr<<"dont have max_responses";
     }
     return max_responses;
+
+}
+int ConverterJSON::Get_number_version() {
+    ifstream file_config_read("..\\json_file\\config.json");
+    if (file_config_read.is_open()) {
+        json config_dict;
+        file_config_read >> config_dict;
+
+        number_of_verson = config_dict["config"].value("version", 1);
+    }else {
+        cerr<<"dont have name program";
+    }
+    return number_of_verson;
+
+}
+
+string ConverterJSON::GetEngineName() {
+    ifstream file_config_read("..\\json_file\\config.json");
+    if (file_config_read.is_open()) {
+        json config_dict;
+        file_config_read >> config_dict;
+
+        name_program = config_dict["config"].value("name", "UnknownEngine");
+    }else {
+        cerr<<"dont have name program";
+    }
+    return name_program;
 
 }
 

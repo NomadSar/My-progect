@@ -3,18 +3,18 @@
 #include "inverted_index.h"
 #include "Seachserver.h"
 #include "gtest/gtest.h"
+
 TEST(sample_test_case, sample_test)
 {
     EXPECT_EQ(1, 1);
 }
-
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);
 
     ConverterJSON converter;
     converter.get_path();
-//    std::cout << "Engine: " << converter.GetEngineName() << " v." << converter.GetEngineVersion() << "\n";
+    std::cout << "Engine: " << converter.GetEngineName() << " v." << converter.Get_number_version() << "\n";
 
     /* создать объект-индекс */
     InvertedIndex idx;

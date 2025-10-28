@@ -18,7 +18,6 @@ private:
     int number_of_verson;
     int max_responses;
     vector<string> text_file;
-//    vector<vector<RelativeIndex>> searchResults;
     vector<string> path_file;
     vector<string> requests;
     vector<vector<string>> requestWords;
@@ -32,9 +31,10 @@ public:
     vector <string> GetTextDocuments();
 
     int GetResponsesLimit() ;
-//    int Getnameversion() const;
-//
-//    void request_apdeit();
+
+    int Get_number_version() ;
+
+    string GetEngineName() ;
 
     static void putAnswers(std::vector<std::vector<std::pair<int, float>>> answers);
 //    void find_request(const map<string, vector<Entry>> &base);

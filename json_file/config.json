@@ -2,7 +2,7 @@
   "config": {
     "name": "SkillboxSearchEngine",
     "version": 2,
-    "max_responses": 4
+    "max_responses": 5
   },
   "files": [
     "../resources/file001.txt",
