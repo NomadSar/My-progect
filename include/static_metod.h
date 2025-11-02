@@ -14,7 +14,7 @@ struct RelativeIndex {
     size_t doc_id;
     float rank;
 
-    bool operator==(const RelativeIndex& other) const {
+    bool operator==(const RelativeIndex &other) const {
         return (doc_id == other.doc_id && rank > (other.rank - 0.000001) && rank < (other.rank + 0.000001));
     }
 };
@@ -29,10 +29,5 @@ struct Entry {
     }
 };
 
-string toLower(const string &str);
-
-vector<string> splitString(const string &str);
-
+// удаляет знаки переноса
 string removeLineBreaks(const string &input_string);
-
-bool compareRelativeIndex(const RelativeIndex &a, const RelativeIndex &b);

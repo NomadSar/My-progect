@@ -23,7 +23,6 @@ public:
     /*! \brief Метод для возвращения количества файлов */
     [[nodiscard]] size_t GetFilesCount() const;
 
-//    std::map<std::string, std::vector<Entry>> get_dict();
 
 private:
     /*! \brief Список содержимого документов */

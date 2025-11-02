@@ -3,18 +3,18 @@
 
 // Заполнение базы данных
 void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
-    static std::mutex freq_dictionary_mutex; // статический мьютекс для защиты общего словаря
-    /* очистка имеющихся данных */
+    static std::mutex freq_dictionary_mutex;
+
     docs.clear();
     freq_dictionary.clear();
 
     docs.resize(input_docs.size());
     files_count = input_docs.size();
 
-    /* заполнение новыми данными файла docs */
+
     std::copy(input_docs.begin(), input_docs.end(), docs.begin());
 
-    /* обработка документов */
+
     auto process_document = [&](size_t i) {
         std::stringstream buffer_stream(input_docs[i]);
         std::string word;
@@ -28,7 +28,7 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
             }
             word_count++;
 
-            // блокировка для доступа к freq_dictionary
+
             {
                 std::lock_guard<std::mutex> lock(freq_dictionary_mutex);
                 auto it = freq_dictionary.find(word);
@@ -51,8 +51,6 @@ void InvertedIndex::UpdateDocumentBase(std::vector<std::string> input_docs) {
         }
     };
 
-    // Можно запустить обработку в параллели, если нужно
-    // Например, с помощью std::thread или std::async
     for (size_t i = 0; i < input_docs.size(); ++i) {
         process_document(i);
     }

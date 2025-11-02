@@ -12,9 +12,6 @@ void ConverterJSON::get_path() {
             cerr << "config file is empty" << endl;
         }
 
-        name_program = config_dict["config"].value("name", "UnknownEngine");
-        number_of_verson = config_dict["config"].value("version", 1);
-
         for (auto iterator_first = config_dict.begin(); iterator_first != config_dict.end(); ++iterator_first) {
             for (auto iterator_sekond = iterator_first.value().begin();
                  iterator_sekond != iterator_first.value().end(); ++iterator_sekond) {
@@ -30,7 +27,7 @@ void ConverterJSON::get_path() {
 }
 
 
-// метод открывает файл с запросами и сохраняет их.
+
 vector <string> ConverterJSON::GetRequests() {
     ifstream file_requests_read("..\\json_file\\requests.json");
     if (file_requests_read.is_open()) {
@@ -52,11 +49,7 @@ vector <string> ConverterJSON::GetRequests() {
 }
 
 
-/**
-* Метод получения содержимого файлов
-* @return Возвращает список с содержимым файлов перечисленных
-* в config.json
-*/
+
 vector<string> ConverterJSON::GetTextDocuments() {
 
     for (const auto &item: path_file) {
