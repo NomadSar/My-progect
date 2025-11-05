@@ -8,20 +8,20 @@ project("search_engine" VERSION 1.0)
 file(
         GLOB TARGET_SRC
         main.cpp
-        ../inc/main.hpp
+        ../include/main.h
 )
 
 # Создаем переменную, хранящую пути к заголовочным файлам библиотеки
 file(
         GLOB HEADER_LIB
-        ../inc/*.hpp
+        ../include/*.h
 )
 
 # Создаем переменную, хранящую пути к файлам реализации библиотеки
 # Исправлено: убраны неправильные шаблоны, оставьте свои пути
 file(
         GLOB SOURCE_LIB
-        ../inc/*.cpp
+        ../include/*.cpp
 )
 
 # Создаем библиотеку для последующего использования (например, в тестах)
