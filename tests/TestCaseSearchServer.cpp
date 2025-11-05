@@ -1,10 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <gtest/gtest.h>
-#include "coverter.h"
-#include "inverted_index.h"
-#include "Seachserver.h"
-#include "static_metod.h"
+#include "tests.hpp"
 
 TEST(TestCaseSearchServer, TestSimple)
 {

@@ -1,8 +1,4 @@
-#include <iostream>
-#include <fstream>
-#include <gtest/gtest.h>
-#include "inverted_index.h"
-#include "static_metod.h"
+#include "tests.hpp"
 
 void TestInvertedIndexFunctionality(const std::vector<std::string>& docs,
                                     const std::vector<std::string>& requests,

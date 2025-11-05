@@ -3,7 +3,7 @@
 
 // метод открывает файл config.json считывает данные в созданные переменные
 void ConverterJSON::get_path() {
-    ifstream file_config_read("..\\json_file\\config.json");
+    ifstream file_config_read("..\\..\\json_file\\config.json");
     if (file_config_read.is_open()) {
         string target = "config";
         json config_dict;
@@ -29,7 +29,7 @@ void ConverterJSON::get_path() {
 
 
 vector <string> ConverterJSON::GetRequests() {
-    ifstream file_requests_read("..\\json_file\\requests.json");
+    ifstream file_requests_read("..\\..\\json_file\\requests.json");
     if (file_requests_read.is_open()) {
         json requests_dict;
         file_requests_read >> requests_dict;
@@ -68,7 +68,7 @@ vector<string> ConverterJSON::GetTextDocuments() {
 
 
 int ConverterJSON::GetResponsesLimit() {
-    ifstream file_config_read("..\\json_file\\config.json");
+    ifstream file_config_read("..\\..\\json_file\\config.json");
     if (file_config_read.is_open()) {
         json config_dict;
         file_config_read >> config_dict;
@@ -81,7 +81,7 @@ int ConverterJSON::GetResponsesLimit() {
 
 }
 int ConverterJSON::Get_number_version() {
-    ifstream file_config_read("..\\json_file\\config.json");
+    ifstream file_config_read("..\\..\\json_file\\config.json");
     if (file_config_read.is_open()) {
         json config_dict;
         file_config_read >> config_dict;
@@ -95,7 +95,7 @@ int ConverterJSON::Get_number_version() {
 }
 
 string ConverterJSON::GetEngineName() {
-    ifstream file_config_read("..\\json_file\\config.json");
+    ifstream file_config_read("..\\..\\json_file\\config.json");
     if (file_config_read.is_open()) {
         json config_dict;
         file_config_read >> config_dict;
@@ -115,7 +115,7 @@ void ConverterJSON::putAnswers(std::vector<std::vector<std::pair<int, float>>> a
     nlohmann::json requests;
     nlohmann::json rel;
 
-        answers_file.open("..\\json_file\\answers.json");
+        answers_file.open("..\\..\\json_file\\answers.json");
 
         for (size_t i = 0; i < answers.size(); i++)
         {
