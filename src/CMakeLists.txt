@@ -1,47 +1,60 @@
 # Требуемая минимальная версия CMake
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.21)
 
-# Название и версия проекта
-project(search_engine LANGUAGES CXX)
+# Название и версия основного проекта
+project("search_engine" VERSION 1.0)
 
-# Создаем исполняемый файл
-add_executable(search_engine main.cpp coverter.cpp inverted_index.cpp Seachserver.cpp static_metod.cpp )
+# Создаем переменную, хранящую пути к файлам
+file(
+        GLOB TARGET_SRC
+        main.cpp
+        ../inc/main.hpp
+)
 
-# Включаем директории, если есть переменная MY_INCLUDE_DIR
-target_include_directories(search_engine PUBLIC ${MY_INCLUDE_DIR})
+# Создаем переменную, хранящую пути к заголовочным файлам библиотеки
+file(
+        GLOB HEADER_LIB
+        ../inc/*.hpp
+)
 
-# Включаем FetchContent
+# Создаем переменную, хранящую пути к файлам реализации библиотеки
+# Исправлено: убраны неправильные шаблоны, оставьте свои пути
+file(
+        GLOB SOURCE_LIB
+        ../inc/*.cpp
+)
+
+# Создаем библиотеку для последующего использования (например, в тестах)
+add_library(MySearchEngineLib ${HEADER_LIB} ${SOURCE_LIB})
+
+# Включаем сторонние библиотеки
 include(FetchContent)
 
-# Отключаем тесты для json
+# Отключаем модульные тесты для json
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
-# Объявляем и скачиваем json
+cmake_policy(SET CMP0135 NEW)
+# Скачиваем nlohmann_json
 FetchContent_Declare(
         json
         URL https://github.com/nlohmann/json/releases/download/v3.11.3/json.tar.xz
-        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
 FetchContent_MakeAvailable(json)
 
-# Линковка json
-target_link_libraries(search_engine PRIVATE nlohmann_json::nlohmann_json)
-
-#[[
-# Объявляем и скачиваем googletest
-FetchContent_Declare(
-        googletest
-        URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
-        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+# Связываем библиотеку json с нашей библиотекой
+target_link_libraries(
+        MySearchEngineLib
+        nlohmann_json::nlohmann_json
 )
-FetchContent_MakeAvailable(googletest)
 
-# Включаем тестирование
-enable_testing()
+# Создаем основной исполняемый файл
+add_executable(
+        search_engine
+        ${TARGET_SRC}
+)
 
-# Линковка gtest и gtest_main
-target_link_libraries(search_engine PRIVATE gtest_main)
+target_link_libraries(
+        search_engine
+        MySearchEngineLib
+)
 
-# Включаем GoogleTest
-include(GoogleTest)
-gtest_discover_tests(search_engine)]]

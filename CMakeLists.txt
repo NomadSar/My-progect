@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 3.21)
 
 # Применяемый стандарт C++
 set(CMAKE_CXX_STANDARD 14 )
@@ -12,4 +12,4 @@ project(search_project)
 add_subdirectory(src)
 
 # добавляем поддиректорию тестов
-#add_subdirectory(tests)
+add_subdirectory(tests)
