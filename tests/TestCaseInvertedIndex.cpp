@@ -1,4 +1,4 @@
-#include "tests.hpp"
+#include "tests.h"
 
 void TestInvertedIndexFunctionality(const std::vector<std::string>& docs,
                                     const std::vector<std::string>& requests,

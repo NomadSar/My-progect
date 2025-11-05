@@ -1,4 +1,4 @@
-#include "tests.hpp"
+#include "tests.h"
 
 int run_tests()
 {

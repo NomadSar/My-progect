@@ -1,31 +1,27 @@
-# Требуемая минимальная версия CMake
 cmake_minimum_required(VERSION 3.21)
 
-# Название и версия основного проекта
 project("search_engine" VERSION 1.0)
 
-# Создаем переменную, хранящую пути к файлам
+# Пути к исходным файлам (например, исходные файлы в src/)
 file(
         GLOB TARGET_SRC
         main.cpp
-        ../include/main.h
 )
 
-# Создаем переменную, хранящую пути к заголовочным файлам библиотеки
+# Пути к заголовочным файлам (если нужно, для IDE и так далее)
 file(
         GLOB HEADER_LIB
         ../include/*.h
 )
 
-# Создаем переменную, хранящую пути к файлам реализации библиотеки
-# Исправлено: убраны неправильные шаблоны, оставьте свои пути
+# Пути к файлам реализации библиотеки
 file(
         GLOB SOURCE_LIB
-        ../include/*.cpp
+        ../src/*.cpp  # измените на реальный путь к вашим исходным файлам библиотеки
 )
 
-# Создаем библиотеку для последующего использования (например, в тестах)
-add_library(MySearchEngineLib ${HEADER_LIB} ${SOURCE_LIB})
+# Создаем библиотеку только из исходных файлов реализации
+add_library(MySearchEngineLib ${SOURCE_LIB})
 
 # Включаем сторонние библиотеки
 include(FetchContent)
@@ -34,6 +30,7 @@ include(FetchContent)
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
 cmake_policy(SET CMP0135 NEW)
+
 # Скачиваем nlohmann_json
 FetchContent_Declare(
         json
@@ -41,7 +38,7 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(json)
 
-# Связываем библиотеку json с нашей библиотекой
+# Связываем json с нашей библиотекой
 target_link_libraries(
         MySearchEngineLib
         nlohmann_json::nlohmann_json
@@ -50,9 +47,10 @@ target_link_libraries(
 # Создаем основной исполняемый файл
 add_executable(
         search_engine
-        ${TARGET_SRC}
+        main.cpp
 )
 
+# Связываем исполняемый файл с библиотекой
 target_link_libraries(
         search_engine
         MySearchEngineLib

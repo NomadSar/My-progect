@@ -12,6 +12,7 @@ include(FetchContent)
 
 cmake_policy(SET CMP0135 NEW)
 # Скачиваем gtest из GitHub (если еще не скачан)
+
 FetchContent_Declare(
         googletest
         URL https://github.com/google/googletest/archive/refs/tags/release-1.12.1.zip
@@ -22,19 +23,16 @@ FetchContent_MakeAvailable(googletest)
 # Используйте правильный путь к папке с тестами
 file(
         GLOB TARGET_TEST
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/tests/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 )
 
-# Создаем тестовый исполняемый файл
 add_executable(
         search_engine_test
         ${TARGET_TEST}
 )
 
-# Связываем с gtest и вашей библиотекой
-target_link_libraries(
-        search_engine_test
+target_link_libraries(search_engine_test PRIVATE
         gtest_main
         MySearchEngineLib
 )
@@ -42,7 +40,3 @@ target_link_libraries(
 # Регистрация тестов с помощью gtest_discover_tests
 include(GoogleTest)
 gtest_discover_tests(search_engine_test)
-
-
-
-
