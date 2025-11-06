@@ -1,4 +1,6 @@
 #include "tests.h"
+#include "gtest/gtest.h"
+
 
 TEST(TestCaseSearchServer, TestSimple)
 {

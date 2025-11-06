@@ -1,8 +1,12 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.30)
 
 # Применяемый стандарт C++
 set(CMAKE_CXX_STANDARD 14 )
-set(MY_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/include)
+
+include_directories(
+        include
+        src
+)
 
 # Название корневого проекта (этот проект не собирается)
 project(search_project)

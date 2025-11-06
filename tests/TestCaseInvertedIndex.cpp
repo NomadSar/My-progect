@@ -1,4 +1,9 @@
 #include "tests.h"
+#include "gtest/gtest.h"
+TEST(sample_test_case, sample_test)
+{
+    EXPECT_EQ(1, 1);
+}
 
 void TestInvertedIndexFunctionality(const std::vector<std::string>& docs,
                                     const std::vector<std::string>& requests,
