@@ -1,6 +1,8 @@
-#include "tests.h"
-#include "gtest/gtest.h"
 
+#include "gtest/gtest.h"
+#include "coverter.h"
+#include "inverted_index.h"
+#include "Seachserver.h"
 
 TEST(TestCaseSearchServer, TestSimple)
 {

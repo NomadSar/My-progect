@@ -2,12 +2,7 @@
 #include "coverter.h"
 #include "inverted_index.h"
 #include "Seachserver.h"
-//#include "gtest/gtest.h"
-//
-//TEST(sample_test_case, sample_test)
-//{
-//    EXPECT_EQ(1, 1);
-//}
+
 
 int main() {
     SetConsoleOutputCP(CP_UTF8);

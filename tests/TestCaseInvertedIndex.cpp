@@ -1,5 +1,9 @@
-#include "tests.h"
+
 #include "gtest/gtest.h"
+#include "coverter.h"
+#include "inverted_index.h"
+#include "Seachserver.h"
+
 TEST(sample_test_case, sample_test)
 {
     EXPECT_EQ(1, 1);
