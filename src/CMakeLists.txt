@@ -29,7 +29,6 @@ include(FetchContent)
 # Отключаем модульные тесты для json
 set(JSON_BuildTests OFF CACHE INTERNAL "")
 
-cmake_policy(SET CMP0135 NEW)
 
 # Скачиваем nlohmann_json
 FetchContent_Declare(
