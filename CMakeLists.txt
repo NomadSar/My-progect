@@ -17,3 +17,5 @@ add_subdirectory(src)
 
 # добавляем поддиректорию тестов
 add_subdirectory(tests)
+
+enable_testing()

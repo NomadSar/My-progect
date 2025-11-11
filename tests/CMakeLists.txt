@@ -26,7 +26,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 # Открытие доступности скаченных из GitHub репозитория данных
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
+
 
 file(
         GLOB TARGET_TEST
