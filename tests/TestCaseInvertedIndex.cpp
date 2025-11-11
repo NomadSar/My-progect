@@ -1,13 +1,4 @@
-
-#include "gtest/gtest.h"
-#include "coverter.h"
-#include "inverted_index.h"
-#include "Seachserver.h"
-
-TEST(sample_test_case, sample_test)
-{
-    EXPECT_EQ(1, 1);
-}
+#include "tests.hpp"
 
 void TestInvertedIndexFunctionality(const std::vector<std::string>& docs,
                                     const std::vector<std::string>& requests,

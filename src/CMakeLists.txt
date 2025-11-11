@@ -2,17 +2,17 @@ cmake_minimum_required(VERSION 3.30)
 
 project("search_engine" VERSION 1.0)
 
-# Пути к исходным файлам (например, исходные файлы в src/)
-file(
-        GLOB TARGET_SRC
-        main.cpp
-)
-
-# Пути к заголовочным файлам (если нужно, для IDE и так далее)
-file(
-        GLOB HEADER_LIB
-        ../include/*.h
-)
+## Пути к исходным файлам (например, исходные файлы в src/)
+#file(
+#        GLOB TARGET_SRC
+#        main.cpp
+#)
+#
+## Пути к заголовочным файлам (если нужно, для IDE и так далее)
+#file(
+#        GLOB HEADER_LIB
+#        ../include/*.h
+#)
 
 # Пути к файлам реализации библиотеки
 file(
