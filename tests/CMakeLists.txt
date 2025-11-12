@@ -46,6 +46,8 @@ target_link_libraries(search_engine_test PRIVATE
 
 include(googletest)
 
+gtest_discover_tests(search_engine_test)
+
 
 
 

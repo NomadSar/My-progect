@@ -15,7 +15,7 @@ project(search_project)
 # добавляем поддиректорию движка
 add_subdirectory(src)
 
+enable_testing()
 # добавляем поддиректорию тестов
 add_subdirectory(tests)
 
-enable_testing()
