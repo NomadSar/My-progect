@@ -29,5 +29,5 @@ struct Entry {
     }
 };
 
-// удаляет знаки переноса
+/*Удаляет знаки переноса*/
 string removeLineBreaks(const string &input_string);
